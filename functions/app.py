@@ -9,9 +9,9 @@ def lambda_handler(event, context):
   elif expect_code == '200':
     return {
       "statusCode": 200,
-      "body": json.dumps({
+      "body": {
         "message": "hello world"
-      })
+      }
     }
   else:
     raise Exception("Unsupported code was specified")

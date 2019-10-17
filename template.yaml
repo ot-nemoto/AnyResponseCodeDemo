@@ -29,3 +29,7 @@ Resources:
             Path: /
             Method: get
             RestApiId: !Ref AnyResponseCodeDemoApi
+
+Outputs:
+  InvokeUrl:
+    Value: !Sub "https://${AnyResponseCodeDemoApi}.execute-api.${AWS::Region}.amazonaws.com/v1/"
