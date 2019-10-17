@@ -1,5 +1,13 @@
 # AnyResponseCodeDemo
 
+## 概要
+
+## 構成
+
+## デプロイ
+
+ソースコードをアップロードするS3バケットを作成
+
 ```sh
 aws cloudformation create-stack \
     --stack-name any-response-code-demo-bucket \
@@ -13,6 +21,7 @@ echo ${S3BUCKET}
   #
 ```
 
+パッケージ
 
 ```sh
 sam package \
@@ -20,10 +29,21 @@ sam package \
     --s3-bucket ${S3BUCKET}
 ```
 
+デプロイ
 
 ```sh
 sam deploy \
     --template-file packaged.yaml \
     --stack-name any-response-code-demo \
     --capabilities CAPABILITY_IAM
+```
+
+## お掃除
+
+```sh
+aws cloudformation delete-stack \
+    --stack-name any-response-code-demo
+
+aws cloudformation delete-stack \
+    --stack-name any-response-code-demo-bucket
 ```
