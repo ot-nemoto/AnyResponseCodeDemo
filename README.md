@@ -14,16 +14,12 @@
 ソースコードをアップロードするS3バケットを作成
 
 ```sh
-aws cloudformation create-stack \
-    --stack-name any-response-code-demo-bucket \
-    --template-body file://bucket_template.yaml
-
-S3BUCKET=$(aws cloudformation describe-stacks \
-    --stack-name any-response-code-demo-bucket \
-    --query 'Stacks[].Outputs[?OutputKey==`S3Bucket`].OutputValue' \
-    --output text)
+S3BUCKET=any-response-code-demo-bucket-`date +%Y%m%d%H%M%S`
 echo ${S3BUCKET}
-  #
+  # any-response-code-demo-bucket-01234567890123
+
+aws s3 mb s3://${S3BUCKET}
+  # make_bucket: any-response-code-demo-bucket-01234567890123
 ```
 
 パッケージ
@@ -104,6 +100,5 @@ curl -s ${INVOKE_URL}?expect_code=50x -o /dev/null -w '%{http_code}\n'
 aws cloudformation delete-stack \
     --stack-name any-response-code-demo
 
-aws cloudformation delete-stack \
-    --stack-name any-response-code-demo-bucket
+aws s3 rb s3://${S3BUCKET} --force
 ```
