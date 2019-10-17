@@ -9,6 +9,14 @@
 
 ## 構成
 
+- クエリパラメータ *expect_code* で指定したレスポンスコードを指定します。
+  - 未指定の場合は、デフォルトでは **200** です。
+  - **200** の場合は。`hello worl` を message で返します。
+  - **400** の場合は、 `Requested response code is 400` を message で返します。
+  - **200**、**400** 以外の場合は、`Unsupported code was specified` を message で返します。
+- **400** とその他の場合、LambdaではExceptionを発生させます。
+- LambdaではエラーメッセージをJson形式でAPI Gatewayに渡すので、API Gatewayのレスポンス統合で、メッセージを正規表現でマッチングさせ、それぞれのレスポンスコードで返すようにしています。
+
 ## デプロイ
 
 ソースコードをアップロードするS3バケットを作成
