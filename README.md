@@ -10,11 +10,89 @@
 ## 構成
 
 - クエリパラメータ *expect_code* で指定したレスポンスコードを指定します。
-  - 未指定の場合は、デフォルトでは **200** です。
-  - **200** の場合は。`hello worl` を message で返します。
-  - **400** の場合は、 `Requested response code is 400` をメッセージにExceptionは発生させます。
-  - **200**、**400** 以外の場合は、`Unsupported code was specified` をメッセージにExceptionを発生させます。
-- LambdaではExceptionからエラーメッセージをJson形式でAPI Gatewayに渡すので、API Gatewayのレスポンス統合で、メッセージを正規表現でマッチングさせ、それぞれのレスポンスコードで返すようにしています。
+- 未指定の場合は、デフォルトでは **200** を返します。
+- *expect_code*=**200**
+
+```py
+# json を return
+return {
+  "statusCode": 200,
+  "body": {
+    "message": "hello world"
+  }
+}
+```
+
+API Gateway ではHTTPレスポンスコードを200で、Lambda側のレスポンスをそのまま（パススルー）返却する。
+
+```json
+{
+  "body": {
+    "message": "hello world"
+  },
+  "statusCode": 200
+}
+```
+
+- *expect_code*=**400**
+
+```py
+# Exceptionを発生
+raise Exception("Bad Request")
+```
+
+Lambdaではreturnせずに、Exceptionを発生させる。通常、API Gateway側は、Lambdaのレスポンス（エラーメッセージのJSON）をHTTPレスポンスコードを 200 で返却する。
+このデモでは、API Gateway のレスポンス統合で、**errorMessage** が `Bad Request` のレスポンスを正規表現でひっかけ、HTTPレスポンスコードを 400 で返却する。
+
+```json
+{
+  "statusCode": 400,
+  "body": {
+    "message": "Bad Request"
+  }
+}
+```
+
+- *expect_code*=**401**
+
+このケースは、Exceptionから生成されるJSONと同様のパラメータを return した場合の挙動検証
+
+```py
+# json を return
+return {
+  "stackTrace": [],
+  "errorType": "Exception",
+  "errorMessage": "Unauthorixed"
+}
+```
+
+API Gateway では、400と同様に、レスポンス統合で、**errorMessage** が `Unauthorixed` を正規表現でひっかけ、HTTPレスポンスコードを 401 で返却することを想定したが、結果として、return されたものは、正規表現には引っかからず、正常なHTTPレスポンスコード 200 として返却する。（なのでレスポンス内容はパススルー）
+
+```json
+{
+  "stackTrace": [],
+  "errorMessage": "Unauthorixed",
+  "errorType": "Exception"
+}
+```
+
+- 上記以外（e.g. *expect_code*=**50x**）
+
+```py
+# Exceptionを発生
+raise Exception("Internal Server Error")
+```
+400 ケースと同様に、上記で触れていない *expect_code* が指定された場合には、Exceptionを発生させる。
+API Gateway のレスポンス統合で、**errorMessage** が `Internal Server Error` のレスポンスを正規表現でひっかけ、HTTPレスポンスコードを 500 で返却する。
+
+```json
+{
+  "statusCode": 500,
+  "body": {
+    "message": "Internal Server Error"
+  }
+}
+```
 
 ## デプロイ
 
@@ -59,7 +137,7 @@ echo ${INVOKE_URL}
   #
 ```
 
-レスポンスコードが200のケース
+正常なレスポンスコードを返すリクエスト
 
 ```sh
 curl -s ${INVOKE_URL} | jq
@@ -73,32 +151,18 @@ curl -s ${INVOKE_URL} -o /dev/null -w '%{http_code}\n'
   # 200
 ```
 
-レスポンスコードが400のケース
+*expect_code* で期待するHTTPレスポンスコードを指定するリクエスト
 
 ```sh
 curl -s ${INVOKE_URL}?expect_code=400 | jq
   # {
   #   "statusCode": 400,
   #   "body": {
-  #     "message": "Requested response code is 400"
+  #     "message": "Bad Request"
   #   }
   # }
 curl -s ${INVOKE_URL}?expect_code=400 -o /dev/null -w '%{http_code}\n'
   # 400
-```
-
-レスポンスコードが500のケース
-
-```sh
-curl -s ${INVOKE_URL}?expect_code=50x | jq
-  # {
-  #   "statusCode": 500,
-  #   "body": {
-  #     "message": "Unsupported code was specified"
-  #   }
-  # }
-curl -s ${INVOKE_URL}?expect_code=50x -o /dev/null -w '%{http_code}\n'
-  # 500
 ```
 
 ## お掃除

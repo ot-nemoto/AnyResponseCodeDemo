@@ -17,6 +17,9 @@ paths:
         400:
           description: 400 response
           content: {}
+        401:
+          description: 401 response
+          content: {}
         500:
           description: 500 response
           content: {}
@@ -26,7 +29,7 @@ paths:
         responses:
           default:
             statusCode: "200"
-          Requested response code is 400:
+          Bad Request:
             statusCode: "400"
             responseTemplates:
               application/json: |
@@ -36,7 +39,17 @@ paths:
                     "message": "$input.path('errorMessage')"
                   }
                 }
-          Unsupported code was specified:
+          Unauthorixed:
+            statusCode: "401"
+            responseTemplates:
+              application/json: |
+                {
+                  "statusCode": 401,
+                  "body": {
+                    "message": "$input.path('errorMessage')"
+                  }
+                }
+          Internal Server Error:
             statusCode: "500"
             responseTemplates:
               application/json: |
