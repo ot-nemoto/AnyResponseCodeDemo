@@ -101,4 +101,7 @@ aws cloudformation delete-stack \
     --stack-name any-response-code-demo
 
 aws s3 rb s3://${S3BUCKET} --force
+  # ...
+  # delete: s3://any-response-code-demo-bucket-01234567890123/...
+  # remove_bucket: any-response-code-demo-bucket-01234567890123
 ```
