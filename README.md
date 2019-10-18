@@ -53,9 +53,29 @@ Lambdaではreturnせずに、Exceptionを発生させる。通常、API Gateway
 }
 ```
 
+- 上記以外（e.g. *expect_code*=**50x**）
+
+```py
+# Exceptionを発生
+raise Exception("Internal Server Error")
+```
+400 ケースと同様に、上記で触れていない *expect_code* が指定された場合には、Exceptionを発生させる。
+API Gateway のレスポンス統合で、**errorMessage** が `Internal Server Error` のレスポンスを正規表現でひっかけ、HTTPレスポンスコードを 500 で返却する。
+
+```json
+{
+  "statusCode": 500,
+  "body": {
+    "message": "Internal Server Error"
+  }
+}
+```
+
+---
+
 - *expect_code*=**401**
 
-このケースは、Exceptionから生成されるJSONと同様のパラメータを return した場合の挙動検証
+このケースは、Exceptionから生成されるJSONと同様のパラメータを return した場合の**挙動検証**を備忘録として残す。
 
 ```py
 # json を return
@@ -76,23 +96,39 @@ API Gateway では、400と同様に、レスポンス統合で、**errorMessage
 }
 ```
 
-- 上記以外（e.g. *expect_code*=**50x**）
+*expect_code*が**400**と、**401**のケースで、LambdaからAPI Gateway へのレスポンスヘッダーを比較してみると、
 
-```py
-# Exceptionを発生
-raise Exception("Internal Server Error")
-```
-400 ケースと同様に、上記で触れていない *expect_code* が指定された場合には、Exceptionを発生させる。
-API Gateway のレスポンス統合で、**errorMessage** が `Internal Server Error` のレスポンスを正規表現でひっかけ、HTTPレスポンスコードを 500 で返却する。
+**400**の場合
 
 ```json
 {
-  "statusCode": 500,
-  "body": {
-    "message": "Internal Server Error"
-  }
+  Date=Thu, 17 Oct 2019 23:47:36 GMT, Content-Type=application/json,
+  Content-Length=153,
+  Connection=keep-alive,
+  x-amzn-RequestId=42eef5fc-569c-4dda-b2d1-d7740ed9e811,
+  X-Amz-Function-Error=Unhandled,
+  x-amzn-Remapped-Content-Length=0,
+  X-Amz-Executed-Version=$LATEST,
+  X-Amzn-Trace-Id=root=1-5da8fd98-31bcdfca8b188442316886fe;sampled=0
 }
 ```
+
+**401**の場合
+
+```json
+{
+  Date=Thu, 17 Oct 2019 23:48:34 GMT, Content-Type=application/json,
+  Content-Length=76,
+  Connection=keep-alive,
+  x-amzn-RequestId=c125f451-6e58-4eaf-910c-8bcb03f18f2e,
+  x-amzn-Remapped-Content-Length=0,
+  X-Amz-Executed-Version=$LATEST,
+  X-Amzn-Trace-Id=root=1-5da8fdd2-1a32a21d1a1bcca9eaeda4ec;sampled=0
+}
+```
+
+結果、`X-Amz-Function-Error` が含まれるかどうかの違いがあり、
+API Gatewayでは、Lambdaでreturn処理されたものは正常系とし処理され、HTTPレスポンスコードは**200**で処理し、API GatewayでHTTPレスポンスコードを操作したい場合は、例外で返す必要ある。
 
 ## デプロイ
 
