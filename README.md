@@ -96,11 +96,12 @@ API Gateway では、400と同様に、レスポンス統合で、**errorMessage
 }
 ```
 
-*expect_code*が**400**と、**401**のケースで、LambdaからAPI Gateway へのレスポンスヘッダーを比較してみると、
+*expect_code*が**400**と、**401**のケースで、LambdaからAPI Gateway へのレスポンスを比較してみると、
 
 **400**の場合
 
-```json
+*Endpoint response headers:*
+```
 {
   Date=Thu, 17 Oct 2019 23:47:36 GMT, Content-Type=application/json,
   Content-Length=153,
@@ -112,10 +113,19 @@ API Gateway では、400と同様に、レスポンス統合で、**errorMessage
   X-Amzn-Trace-Id=root=1-5da8fd98-31bcdfca8b188442316886fe;sampled=0
 }
 ```
+*Endpoint response body before transformations:*
+```
+{
+  "stackTrace": [["/var/task/app.py", 15, "lambda_handler", "raise Exception(\"Bad Request\")"]],
+  "errorType": "Exception",
+  "errorMessage": "Bad Request"
+}
+```
 
 **401**の場合
 
-```json
+*Endpoint response headers:*
+```
 {
   Date=Thu, 17 Oct 2019 23:48:34 GMT, Content-Type=application/json,
   Content-Length=76,
@@ -124,6 +134,14 @@ API Gateway では、400と同様に、レスポンス統合で、**errorMessage
   x-amzn-Remapped-Content-Length=0,
   X-Amz-Executed-Version=$LATEST,
   X-Amzn-Trace-Id=root=1-5da8fdd2-1a32a21d1a1bcca9eaeda4ec;sampled=0
+}
+```
+*Endpoint response body before transformations:*
+```
+{
+  "stackTrace": [],
+  "errorMessage": "Unauthorixed",
+  "errorType": "Exception"
 }
 ```
 
