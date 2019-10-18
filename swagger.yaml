@@ -20,6 +20,9 @@ paths:
         401:
           description: 401 response
           content: {}
+        403:
+          description: 403 response
+          content: {}
         500:
           description: 500 response
           content: {}
@@ -45,6 +48,16 @@ paths:
               application/json: |
                 {
                   "statusCode": 401,
+                  "body": {
+                    "message": "$input.path('errorMessage')"
+                  }
+                }
+          あなたにはアクセス権がありません:
+            statusCode: "403"
+            responseTemplates:
+              application/json: |
+                {
+                  "statusCode": 403,
                   "body": {
                     "message": "$input.path('errorMessage')"
                   }
