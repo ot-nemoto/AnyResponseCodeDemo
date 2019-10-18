@@ -1,3 +1,5 @@
+# coding: UTF-8
+
 import json
 
 def lambda_handler(event, context):
@@ -19,5 +21,7 @@ def lambda_handler(event, context):
       "errorType": "Exception",
       "errorMessage": "Unauthorixed"
     }
+  elif expect_code == '403':
+    raise Exception("あなたにはアクセス権がありません")
   else:
     raise Exception("Internal Server Error")

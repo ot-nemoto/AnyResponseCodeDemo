@@ -75,7 +75,7 @@ API Gateway のレスポンス統合で、**errorMessage** が `Internal Server 
 
 - *expect_code*=**401**
 
-このケースは、Exceptionから生成されるJSONと同様のパラメータを return した場合の**挙動検証**を備忘録として残す。
+このケースは、Exceptionから生成されるJSONと同様のパラメータを return した場合を検証した備忘録
 
 ```py
 # json を return
@@ -147,6 +147,27 @@ API Gateway では、400と同様に、レスポンス統合で、**errorMessage
 
 結果、`X-Amz-Function-Error` が含まれるかどうかの違いがあり、
 API Gatewayでは、Lambdaでreturn処理されたものは正常系とし処理され、HTTPレスポンスコードは**200**で処理し、API GatewayでHTTPレスポンスコードを操作したい場合は、例外で返す必要ある。
+
+- *expect_code*=**403**
+
+このケースは日本語に対応しているかどうかを検証した備忘録
+
+```py
+# Exceptionを発生
+raise Exception("あなたにはアクセス権がありません")
+```
+
+Exceptionのメッセージを日本語で投げ、API Gatewayの定義(swagger.yaml)にも日本語で正規表現を記載した場合でも、
+API Gatewayのレスポンス統合へ設定が反映され、正規表現にマッチし、意図したレスポンスを返却する。
+
+```json
+{
+  "statusCode": 403,
+  "body": {
+    "message": "あなたにはアクセス権がありません"
+  }
+}
+```
 
 ## デプロイ
 
