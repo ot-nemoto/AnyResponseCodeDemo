@@ -37,40 +37,28 @@ paths:
             responseTemplates:
               application/json: |
                 {
-                  "statusCode": 400,
-                  "body": {
-                    "message": "$input.path('errorMessage')"
-                  }
+                  "message": "$input.path('errorMessage')"
                 }
           Unauthorixed:
             statusCode: "401"
             responseTemplates:
               application/json: |
                 {
-                  "statusCode": 401,
-                  "body": {
-                    "message": "$input.path('errorMessage')"
-                  }
+                  "message": "$input.path('errorMessage')"
                 }
           あなたにはアクセス権がありません:
             statusCode: "403"
             responseTemplates:
               application/json: |
                 {
-                  "statusCode": 403,
-                  "body": {
-                    "message": "$input.path('errorMessage')"
-                  }
+                  "message": "$input.path('errorMessage')"
                 }
           Internal Server Error:
             statusCode: "500"
             responseTemplates:
               application/json: |
                 {
-                  "statusCode": 500,
-                  "body": {
-                    "message": "$input.path('errorMessage')"
-                  }
+                  "message": "$input.path('errorMessage')"
                 }
         passthroughBehavior: WHEN_NO_TEMPLATES
         httpMethod: POST
@@ -78,7 +66,7 @@ paths:
           application/json: |
             #set($allParams = $input.params())
             {
-              "params" : {
+              "queryStringParameters" : {
                 #set($params = $allParams.get('querystring'))
                 #foreach($paramName in $params.keySet())
                 "$paramName" : "$util.escapeJavaScript($params.get($paramName))"

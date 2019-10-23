@@ -5,13 +5,10 @@ import json
 def lambda_handler(event, context):
   print(json.dumps(event))
 
-  expect_code = event.get('params').get('expect_code', '200')
+  expect_code = event.get('queryStringParameters').get('expect_code', '200')
   if expect_code == '200':
     return {
-      "statusCode": 200,
-      "body": {
-        "message": "hello world"
-      }
+      "message": "hello world"
     }
   elif expect_code == '400':
     raise Exception("Bad Request")
