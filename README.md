@@ -16,10 +16,7 @@
 ```py
 # json を return
 return {
-  "statusCode": 200,
-  "body": {
-    "message": "hello world"
-  }
+  "message": "hello world"
 }
 ```
 
@@ -27,10 +24,7 @@ API Gateway ではHTTPレスポンスコードを200で、Lambda側のレスポ�
 
 ```json
 {
-  "body": {
-    "message": "hello world"
-  },
-  "statusCode": 200
+  "message": "hello world"
 }
 ```
 
@@ -46,10 +40,7 @@ Lambdaではreturnせずに、Exceptionを発生させる。通常、API Gateway
 
 ```json
 {
-  "statusCode": 400,
-  "body": {
-    "message": "Bad Request"
-  }
+  "message": "Bad Request"
 }
 ```
 
@@ -64,10 +55,7 @@ API Gateway のレスポンス統合で、**errorMessage** が `Internal Server 
 
 ```json
 {
-  "statusCode": 500,
-  "body": {
-    "message": "Internal Server Error"
-  }
+  "message": "Internal Server Error"
 }
 ```
 
@@ -162,10 +150,7 @@ API Gatewayのレスポンス統合へ設定が反映され、正規表現にマ
 
 ```json
 {
-  "statusCode": 403,
-  "body": {
-    "message": "あなたにはアクセス権がありません"
-  }
+  "message": "あなたにはアクセス権がありません"
 }
 ```
 
@@ -217,10 +202,7 @@ echo ${INVOKE_URL}
 ```sh
 curl -s ${INVOKE_URL} | jq
   # {
-  #   "body": {
-  #     "message": "hello world"
-  #   },
-  #   "statusCode": 200
+  #   "message": "hello world"
   # }
 curl -s ${INVOKE_URL} -o /dev/null -w '%{http_code}\n'
   # 200
@@ -231,10 +213,7 @@ curl -s ${INVOKE_URL} -o /dev/null -w '%{http_code}\n'
 ```sh
 curl -s ${INVOKE_URL}?expect_code=400 | jq
   # {
-  #   "statusCode": 400,
-  #   "body": {
-  #     "message": "Bad Request"
-  #   }
+  #   "message": "Bad Request"
   # }
 curl -s ${INVOKE_URL}?expect_code=400 -o /dev/null -w '%{http_code}\n'
   # 400
