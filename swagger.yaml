@@ -13,6 +13,10 @@ paths:
       responses:
         200:
           description: 200 response
+          headers:
+            Access-Control-Allow-Origin:
+              schema:
+                type: string
           content: {}
         400:
           description: 400 response
@@ -32,6 +36,8 @@ paths:
         responses:
           default:
             statusCode: "200"
+            responseParameters:
+              method.response.header.Access-Control-Allow-Origin: "'*'"
           Bad Request:
             statusCode: "400"
             responseTemplates:
