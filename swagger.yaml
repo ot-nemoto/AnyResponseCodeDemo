@@ -14,7 +14,7 @@ paths:
         200:
           description: 200 response
           headers:
-            Access-Control-Allow-Origin:
+            X-Any-Response-Code:
               schema:
                 type: string
           content: {}
@@ -37,7 +37,7 @@ paths:
           default:
             statusCode: "200"
             responseParameters:
-              method.response.header.Access-Control-Allow-Origin: "'*'"
+              method.response.header.X-Any-Response-Code: "'*'"
           Bad Request:
             statusCode: "400"
             responseTemplates:
@@ -81,3 +81,29 @@ paths:
               }
             }
         type: aws
+    options:
+      responses:
+        200:
+          headers:
+            Access-Control-Allow-Origin:
+              schema:
+                type: string
+            Access-Control-Allow-Methods:
+              schema:
+                type: string
+            Access-Control-Allow-Headers:
+              schema:
+                type: string
+      x-amazon-apigateway-integration:
+        responses:
+          default:
+            statusCode: 200
+            responseParameters:
+              method.response.header.Access-Control-Allow-Methods: "'OPTIONS,GET'"
+              method.response.header.Access-Control-Allow-Headers: "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token'"
+              method.response.header.Access-Control-Allow-Origin: "'*'"
+        requestTemplates:
+          application/json: |
+            { "statusCode": 200 }
+        passthroughBehavior: WHEN_NO_MATCH
+        type: mock
